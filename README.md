@@ -1,2 +1,2 @@
-# Phaser-HTML5-GAME
+# Phaser-HTML5-GAME-MAKING
 Here's what I done to make a simple game using Phaser.js........
