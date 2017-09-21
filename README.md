@@ -1,5 +1,5 @@
 # Phaser-HTML5-GAME-MAKING
-Here's what I done to make a simple game using Phaser.js........
+Here's what I done to make a simple game using Phaser.js........ (You should have a local web server to access the file)
 
 1. DOWNLOAD
 Download Phaser and work locally or develop in the cloud. It's up to you!
