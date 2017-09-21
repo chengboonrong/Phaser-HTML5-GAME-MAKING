@@ -1,0 +1,114 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Phaser - Making your first game, part 1</title>
+	<script type="text/javascript" src="phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+// window screen
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+// import anything that are needed
+function preload() {
+
+    game.load.image('sky', 'assets/sky.png');
+    game.load.image('ground', 'assets/platform.png');
+    game.load.image('star', 'assets/star.png');
+    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+
+}
+
+// draw something onto the screen
+var platforms;
+function create() {
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    // background setting
+    game.add.sprite(0, 0, 'sky');
+
+    // stars setting
+    stars = game.add.group();
+    stars.enableBody = true;
+    var x = 0;
+    var y = 400;
+    for (var i = 1; i <= 10; i++) {
+        star = stars.create(i*Math.random(450)*120,i*Math.random(200)*50, 'star');
+        star.body.gravity.y = 200;
+        star.body.bounce.y = 1;
+        star.body.collideWorldBounds = true;
+    }
+    // platform
+    platforms = game.add.group();
+    platforms.enableBody = true;
+    var ground = platforms.create(0, game.world.height - 40 , 'ground');
+    ground.scale.setTo(2,2);
+    ground.body.immovable = true;
+
+    // player and setting
+    player = game.add.sprite(game.world.centerX,game.world.centerY, 'dude');
+    game.physics.arcade.enable(player);
+
+    player.body.bounce.y = 0.1;
+    player.body.gravity.y = 200;
+    player.body.collideWorldBounds = true;
+
+    player.animations.add('left', [0,1,2,3], 10, true);
+    player.animations.add('right', [5,6,7,8], 10, true);
+
+    // score board
+    scoreText = game.add.text(16, 16, 'score: '+score, {fontSize: '32px', fill: '#000'});
+}
+
+var score = 0;
+var scoreText;
+
+function update() {
+    var player_at_ground = game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(stars, platforms);
+    game.physics.arcade.overlap(player, stars, collect, null, this);
+
+    cursor = game.input.keyboard.createCursorKeys();
+    player.body.velocity.x = 0;
+    if (cursor.left.isDown) {
+        player.body.velocity.x = -100;
+        player.animations.play('left');
+    }
+    else if (cursor.right.isDown) {
+        player.body.velocity.x = 100;
+        player.animations.play('right');
+    }
+    else{
+        player.animations.stop();
+        player.frame = 4;
+    }
+
+    // Jump animation
+    if (cursor.up.isDown && player_at_ground) {
+        player.body.velocity.y = -350;
+    }
+
+}
+
+function collect(player, star) {
+    star.kill();
+    score += 10;
+    scoreText.text = 'score:' + score;
+    if (score == 100) {
+        var text = game.add.text(game.world.centerX,game.world.centerY, 'Finish!', {fill: '#000'})
+        text.anchor.set(0.5);
+    }
+}
+
+</script>
+
+</body>
+</html>
